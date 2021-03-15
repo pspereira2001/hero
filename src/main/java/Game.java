@@ -1,5 +1,8 @@
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -11,11 +14,10 @@ import java.io.IOException;
 
 public class Game{
     private Screen screen;
-    private Hero hero;
-    private boolean bigq = true;
+    private Arena arena;
     public Game() throws IOException{
         try{
-            hero = new Hero(10,10);
+            arena = new Arena(20,40);
             TerminalSize terminalSize = new TerminalSize(40, 20);
             DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory().setInitialTerminalSize(terminalSize);
             Terminal terminal = terminalFactory.createTerminal();
@@ -32,7 +34,7 @@ public class Game{
     private void draw() throws IOException{
         try{
             screen.clear();
-            hero.draw(screen);
+            arena.draw(screen);
             screen.refresh();
         }
         catch (IOException e) {
@@ -41,7 +43,7 @@ public class Game{
     }
 
     public void run() throws IOException{
-        while (bigq) {
+        while (arena.bigq) {
             try {
                 this.draw();
                 KeyStroke key = screen.readInput();
@@ -55,26 +57,8 @@ public class Game{
         }
     }
 
-    private void moveHero(Position position) {
-        hero.setPosition(position);
-    }
 
-    private void processKey(KeyStroke key) {
-        System.out.println(key);
-        if (key.getKeyType() == KeyType.ArrowUp){
-            moveHero(hero.moveUp());
-        }
-        else if (key.getKeyType() == KeyType.ArrowDown){
-            moveHero(hero.moveDown());
-        }
-        else if (key.getKeyType() == KeyType.ArrowLeft){
-            moveHero(hero.moveLeft());
-        }
-        else if (key.getKeyType() == KeyType.ArrowRight){
-            moveHero(hero.moveRight());
-        }
-        else if(key.getCharacter() == 'q') {
-            bigq = false;
-        }
+    private void processKey(KeyStroke key) throws IOException{
+        arena.processKey(key);
     }
 }
